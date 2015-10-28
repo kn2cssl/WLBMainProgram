@@ -2,19 +2,14 @@
 #include <stdio.h>
 #include <string.h>
 //#define F_CPU 32000000UL
-#include <util/delay.h>
+/*#include <util/delay.h>*/
 
 #include "init.h"
-#include "nrf24l01_L.h"
-#include "nrf24l01_R.h"
-
 #include "transmitter.h"
 #define  ADDRESS_SIZE 5
 
 void packing_data (void);
 void stoping_robot (void);
-void Battery_Check (void);
-void Wireless_Recoonection (void);
 void Timer_on (void) ;
 void Timer_show (void) ;
 
@@ -23,47 +18,23 @@ char Buf_Rx[Max_Robot][_Buffer_Size];
 char Address[_Address_Width] = { 0x11, 0x22, 0x33, 0x44, 0x55};
 int  Robot_Select ;
 int  LED_time;
-int  time ;
 uint8_t r_side ;
 uint8_t l_side ;
-uint8_t side	;
-uint16_t timer;
 uint16_t pck_timeout[2][Max_Robot];
+uint8_t side	;
+//! main variables
 int16_t r_id = 0 , l_id = 6 ;
-bool wireless_change_r = true , wireless_change_l = true;
+uint16_t timer;
 
 int main (void)
 {
-/*	En_RC32M();*/
-/*	PORT_init();*/
     sysclk_init();
 	pmic_init();
     port_init();
-	//LCDInit();
-// 	TimerD0_init();
-// 	TimerE1_init();
-// 	TimerE0_init();
 	tc_init();
-	//PMIC_CTRL |=PMIC_LOLVLEN_bm|PMIC_MEDLVLEN_bm;
-
-	wdt_set_timeout_period(WDT_TIMEOUT_PERIOD_500CLK);
+	wdt_set_timeout_period(WDT_TIMEOUT_PERIOD_32CLK);
 	wdt_enable();
-
-// 	USART_R_init();
-// 	USART_L_init();
 	usart_init();
-	
-	NRF24L01_L_CE_LOW;       //disable transceiver modes
-	NRF24L01_R_CE_LOW;
-	/////////////////////////////////////////////////////////////spi setting
-	
-// 	spi_xmega_set_baud_div(&NRF24L01_L_SPI,8000000UL,F_CPU);
-// 	spi_enable_master_mode(&NRF24L01_L_SPI);
-// 	spi_enable(&NRF24L01_L_SPI);
-// 	
-// 	spi_xmega_set_baud_div(&NRF24L01_R_SPI,8000000UL,F_CPU);
-// 	spi_enable_master_mode(&NRF24L01_R_SPI);
-// 	spi_enable(&NRF24L01_R_SPI);
 	spi_init();
 	
 	char str[200];
@@ -75,8 +46,6 @@ int main (void)
 	sei();
 	
 	////////////////////////////////////////////////////////////////////////
-
-	delay_us(10);
 	//power on reset delay needs 10.3ms
 	delay_ms(11);
 	NRF24L01_L_Clear_Interrupts();
@@ -86,18 +55,13 @@ int main (void)
 	NRF24L01_L_Flush_RX();
 	NRF24L01_R_Flush_RX();
 
-	//NRF24L01_L_CE_LOW;
 	NRF24L01_L_Init_milad(_TX_MODE, _CH_L, _2Mbps, Address, _Address_Width, _Buffer_Size, RF_PWR_MAX);
 	NRF24L01_L_WriteReg(W_REGISTER | DYNPD,0x01);
 	NRF24L01_L_WriteReg(W_REGISTER | FEATURE,0x06);
-	//NRF24L01_L_CE_HIGH;
 
-
-	//NRF24L01_R_CE_LOW;
 	NRF24L01_R_Init_milad(_TX_MODE, _CH_R, _2Mbps, Address, _Address_Width, _Buffer_Size, RF_PWR_MAX);
 	NRF24L01_R_WriteReg(W_REGISTER | DYNPD,0x01);
 	NRF24L01_R_WriteReg(W_REGISTER | FEATURE,0x06);
-	//NRF24L01_R_CE_HIGH;
 
 	delay_us(130);
 
@@ -116,7 +80,6 @@ int main (void)
 ISR(TCC0_OVF_vect)
 {
 	wdt_reset();
-	time++;
 	LED_time++;
 	if (LED_time > 10)
 	{
@@ -199,7 +162,6 @@ ISR(PRX_R)//ID:0=>5
 	uint8_t status_R = NRF24L01_R_ReadReg(STATUSe);
 	if((status_R & _RX_DR) == _RX_DR)
 	{
-		wireless_change_r = true ;
 		LED_White_R_PORT.OUTSET = LED_White_R_PIN_bm;
 		//		tmprid = ((status_R&0x0e)>>1);
 		//1) read payload through SPI,
@@ -233,7 +195,6 @@ ISR(PRX_R)//ID:0=>5
 	
 	if ((status_R&_MAX_RT) == _MAX_RT)
 	{
-		wireless_change_r = true ;
 		NRF24L01_R_Flush_TX();
 		LED_White_R_PORT.OUTSET = LED_White_R_PIN_bm;
 	}
@@ -245,7 +206,6 @@ ISR(PRX_L)//ID:6=>11
 	uint8_t status_L = NRF24L01_L_ReadReg(STATUSe);
 	if((status_L & _RX_DR) == _RX_DR)
 	{
-		wireless_change_l = true ;
 		LED_White_L_PORT.OUTSET = LED_White_L_PIN_bm;
 		//		tmprid = ((status_L&0x0e)>>1);
 		//1) read payload through SPI,
@@ -279,7 +239,6 @@ ISR(PRX_L)//ID:6=>11
 	if ((status_L&_MAX_RT) == _MAX_RT)
 	{
 		NRF24L01_L_Flush_TX();
-		wireless_change_l = true ;
 		LED_White_L_PORT.OUTSET = LED_White_L_PIN_bm;
 
 	}
@@ -288,10 +247,6 @@ ISR(PRX_L)//ID:6=>11
 ISR(USART_R_RXC_vect)
 {
 	GetNewData(USARTC0_DATA,R);
-}
-ISR(USART_R_DRE_vect) //Wireless_R_USART
-{
-
 }
 ISR(USART_L_RXC_vect)
 {
@@ -333,10 +288,6 @@ ISR(USART_L_RXC_vect)
 		
 	}
 
-
-}
-ISR(USART_L_DRE_vect) //Wireless_R_USART
-{
 
 }
 
@@ -384,7 +335,7 @@ void stoping_robot(void)
 				Buf_Tx[side][i][3] = 3;
 				Buf_Tx[side][i][4] = 4;
 				Buf_Tx[side][i][5] = 0;
-				Buf_Tx[side][i][6] = time;
+				Buf_Tx[side][i][6] = 0;
 				Buf_Tx[side][i][7] = 0;
 				Buf_Tx[side][i][8] = 0;
 				Buf_Tx[side][i][9] = 0;
