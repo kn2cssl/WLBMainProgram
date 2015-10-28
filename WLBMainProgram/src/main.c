@@ -49,8 +49,9 @@ int main (void)
 	wdt_set_timeout_period(WDT_TIMEOUT_PERIOD_500CLK);
 	wdt_enable();
 
-	USART_R_init();
-	USART_L_init();
+// 	USART_R_init();
+// 	USART_L_init();
+	usart_init();
 	
 	NRF24L01_L_CE_LOW;       //disable transceiver modes
 	NRF24L01_R_CE_LOW;
