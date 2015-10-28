@@ -39,9 +39,10 @@ int main (void)
     sysclk_init();
     port_init();
 	//LCDInit();
-	TimerD0_init();
-	TimerE1_init();
-	TimerE0_init();
+// 	TimerD0_init();
+// 	TimerE1_init();
+// 	TimerE0_init();
+	tc_init();
 	PMIC_CTRL |=PMIC_LOLVLEN_bm|PMIC_MEDLVLEN_bm;
 
 	wdt_set_timeout_period(WDT_TIMEOUT_PERIOD_500CLK);
@@ -109,7 +110,7 @@ int main (void)
 }
 
 // running time : 8755 clk
-ISR(TCD0_OVF_vect)
+ISR(TCC0_OVF_vect)
 {
 	wdt_reset();
 	time++;

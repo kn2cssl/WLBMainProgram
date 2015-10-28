@@ -142,6 +142,8 @@ void TimerE0_init(void);
 
 void TimerE1_init(void);
 
+void tc_init(void);
+
 
 #define USART_BUADRATE 115200
 void USART_R_init(void);
