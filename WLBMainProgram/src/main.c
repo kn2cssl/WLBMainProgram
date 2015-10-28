@@ -57,13 +57,14 @@ int main (void)
 	NRF24L01_R_CE_LOW;
 	/////////////////////////////////////////////////////////////spi setting
 	
-	spi_xmega_set_baud_div(&NRF24L01_L_SPI,8000000UL,F_CPU);
-	spi_enable_master_mode(&NRF24L01_L_SPI);
-	spi_enable(&NRF24L01_L_SPI);
-	
-	spi_xmega_set_baud_div(&NRF24L01_R_SPI,8000000UL,F_CPU);
-	spi_enable_master_mode(&NRF24L01_R_SPI);
-	spi_enable(&NRF24L01_R_SPI);
+// 	spi_xmega_set_baud_div(&NRF24L01_L_SPI,8000000UL,F_CPU);
+// 	spi_enable_master_mode(&NRF24L01_L_SPI);
+// 	spi_enable(&NRF24L01_L_SPI);
+// 	
+// 	spi_xmega_set_baud_div(&NRF24L01_R_SPI,8000000UL,F_CPU);
+// 	spi_enable_master_mode(&NRF24L01_R_SPI);
+// 	spi_enable(&NRF24L01_R_SPI);
+	spi_init();
 	
 	char str[200];
 	uint8_t count ;
