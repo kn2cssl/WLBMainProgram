@@ -9,7 +9,8 @@
 #ifndef NRF24L01_H_
 #define NRF24L01_H_
 
-#include "init.h"
+//#include "init.h"
+#include <asf.h>
 #define	_Address_Width	5	// 3..5
 #define _Buffer_Size 32 // 1..32
 
