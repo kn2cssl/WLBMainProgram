@@ -9,6 +9,8 @@
 #ifndef INITIALIZE_H_
 #define INITIALIZE_H_
 #include <asf.h>
+#include "nrf24l01_L.h"
+#include "nrf24l01_R.h"
 
 //#define F_CPU 32000000UL
 
