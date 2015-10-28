@@ -1,7 +1,7 @@
 #include <asf.h>
 #include <stdio.h>
 #include <string.h>
-#define F_CPU 32000000UL
+//#define F_CPU 32000000UL
 #include <util/delay.h>
 
 #include "init.h"
@@ -72,9 +72,9 @@ int main (void)
 	
 	////////////////////////////////////////////////////////////////////////
 
-	_delay_us(10);
+	delay_us(10);
 	//power on reset delay needs 10.3ms
-	_delay_ms(11);
+	delay_ms(11);
 	NRF24L01_L_Clear_Interrupts();
 	NRF24L01_R_Clear_Interrupts();
 	NRF24L01_L_Flush_TX();
@@ -95,7 +95,7 @@ int main (void)
 	NRF24L01_R_WriteReg(W_REGISTER | FEATURE,0x06);
 	//NRF24L01_R_CE_HIGH;
 
-	_delay_us(130);
+	delay_us(130);
 
 	for (uint8_t i=0;i<Max_Robot;i++)
 	{

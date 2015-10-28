@@ -86,9 +86,9 @@ extern "C" {
  * use this value rather than calling sysclk_get_cpu_hz() to get the current
  * MCU clock frequency.
  */
-// #ifndef F_CPU
-// #       define F_CPU sysclk_get_cpu_hz()
-// #endif
+#ifndef F_CPU
+#       define F_CPU sysclk_get_cpu_hz()
+#endif
 
 /**
  * @def delay_init

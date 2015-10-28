@@ -10,7 +10,7 @@
 #define INITIALIZE_H_
 #include <asf.h>
 
-#define F_CPU 32000000UL
+//#define F_CPU 32000000UL
 
 
 #define ON 1
