@@ -1,9 +1,14 @@
 #include <asf.h>
 #include <stdio.h>
 #include <string.h>
+//#define F_CPU 32000000UL
+/*#include <util/delay.h>*/
+
 #include "init.h"
 #include "transmitter.h"
+#define  ADDRESS_SIZE 5
 
+void packing_data (void);
 void stoping_robot (void);
 void Timer_on (void) ;
 void Timer_show (void) ;
@@ -37,9 +42,28 @@ int main (void)
 	count = sprintf(str,"RESET");
 	for (uint8_t i=0;i<count;i++)
 	usart_putchar(&USARTE0,str[i]);
-	nrf_init(Address);
+	
 	sei();
 	
+	////////////////////////////////////////////////////////////////////////
+	//power on reset delay needs 10.3ms
+	delay_ms(11);
+	NRF24L01_L_Clear_Interrupts();
+	NRF24L01_R_Clear_Interrupts();
+	NRF24L01_L_Flush_TX();
+	NRF24L01_R_Flush_TX();
+	NRF24L01_L_Flush_RX();
+	NRF24L01_R_Flush_RX();
+
+	NRF24L01_L_Init_milad(_TX_MODE, _CH_L, _2Mbps, Address, _Address_Width, _Buffer_Size, RF_PWR_MAX);
+	NRF24L01_L_WriteReg(W_REGISTER | DYNPD,0x01);
+	NRF24L01_L_WriteReg(W_REGISTER | FEATURE,0x06);
+
+	NRF24L01_R_Init_milad(_TX_MODE, _CH_R, _2Mbps, Address, _Address_Width, _Buffer_Size, RF_PWR_MAX);
+	NRF24L01_R_WriteReg(W_REGISTER | DYNPD,0x01);
+	NRF24L01_R_WriteReg(W_REGISTER | FEATURE,0x06);
+
+	delay_us(130);
 
 	for (uint8_t i=0;i<Max_Robot;i++)
 	{
@@ -109,19 +133,24 @@ ISR(TCC0_OVF_vect)
 		
 		Address[4] =   ((r_id) << 4) | r_id ;
 		/*		NRF24L01_R_Set_RX_Pipe(0, Address, 5, 32);*/
-		NRF24L01_R_WriteRegBuf(W_REGISTER | (RX_ADDR_P0), Address, _Address_Width);
+		NRF24L01_R_WriteRegBuf(W_REGISTER | (RX_ADDR_P0), Address, ADDRESS_SIZE);
 		NRF24L01_R_Set_TX_Address(Address, 5); // Set Transmit address
 		NRF24L01_R_Write_TX_Buf(Buf_Tx[r_side][r_id], _Buffer_Size);
 		NRF24L01_R_RF_TX();
 		
 		Address[4] =   ((l_id) << 4) | l_id ;
 		/*NRF24L01_L_Set_RX_Pipe(0, Address, 5, 32);*/
-		NRF24L01_L_WriteRegBuf(W_REGISTER | (RX_ADDR_P0), Address, _Address_Width);
+		NRF24L01_L_WriteRegBuf(W_REGISTER | (RX_ADDR_P0), Address, ADDRESS_SIZE);
 		NRF24L01_L_Set_TX_Address(Address, 5); // Set Transmit address
 		NRF24L01_L_Write_TX_Buf(Buf_Tx[l_side][l_id], _Buffer_Size);
 		NRF24L01_L_RF_TX();
 		
 	}
+
+
+
+	
+	//////////////////////////////////////////////////////////////////////////sending packet
 	stoping_robot();
 	while(Menu_PORT.IN & Menu_Side_Switch_PIN_bm);
 	wdt_reset();
