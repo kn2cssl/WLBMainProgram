@@ -33,6 +33,7 @@ void tc_init(void);
 // void USART_L_init(void);
 void usart_init(void);
 void spi_init(void);
+void nrf_init(char *Address);
 
 // void OUT_Bling(PORT_t *OUT_PORT,uint8_t OUT_PIN_bp,uint8_t Speed,uint32_t *Time_ON,uint32_t time_ms);
 
