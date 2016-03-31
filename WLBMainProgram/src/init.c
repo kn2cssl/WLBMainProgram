@@ -51,7 +51,7 @@ void tc_init(void)
 	tc_enable(&TCE1);
 	tc_set_wgm(&TCE1,TC_WG_NORMAL);
 	tc_write_period(&TCE1,0xffff);
-	tc_write_clock_source(&TCE1,TC_CLKSEL_DIV256_gc);
+	tc_write_clock_source(&TCE1,TC_CLKSEL_DIV2_gc);
 }
 
 void usart_init(void)
