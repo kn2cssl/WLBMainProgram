@@ -14,6 +14,10 @@
 
 //#define F_CPU 32000000UL
 
+#define DMA_CHANNEL     0
+#define DMA_BUFFER_SIZE 408
+
+char source[DMA_BUFFER_SIZE];
 
 // void En_RC32M(void);
 // void PORT_init(void);
@@ -27,6 +31,7 @@ void port_init(void);
 
 void tc_init(void);
 
+void DMA_init(void);
 
 /*#define USART_BUADRATE 115200*/
 // void USART_R_init(void);

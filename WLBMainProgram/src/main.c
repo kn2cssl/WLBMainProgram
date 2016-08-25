@@ -49,10 +49,23 @@ int main (void)
 	{
 		Robot_D_tmp[2][i].RID=12;
 	}
+	
+	for(char i=0;i<12;i++)
+	{
+		source[34*i]='z';
+		source[34*i+1]='a'+i;
+		for(int j=34*i+2;j<34*(i+1);j++)
+		{
+			source[j]=0;
+		}
+	}
+	
+	DMA_init();
 
 	while (1)
 	{
-		
+		delay_ms(600);
+		dma_channel_enable(DMA_CHANNEL);
 	}
 }
 
@@ -140,7 +153,7 @@ ISR(PRX_R)//ID:0=>5
 		LED_White_R_PORT.OUTSET = LED_White_R_PIN_bm;
 		//		tmprid = ((status_R&0x0e)>>1);
 		//1) read payload through SPI,
-		NRF24L01_R_Read_RX_Buf(Buf_Rx[r_id], _Buffer_Size);
+		NRF24L01_R_Read_RX_Buf(&source[r_id*34+2], _Buffer_Size);
 		//2) clear RX_DR IRQ,
 		status_R=NRF24L01_R_WriteReg(W_REGISTER | STATUSe, _RX_DR );
 		//3) read FIFO_STATUS to check if there are more payloads available in RX FIFO,
@@ -148,64 +161,64 @@ ISR(PRX_R)//ID:0=>5
 		
 		
 		
-		id_repeat_counter[r_id]++;
-		
-		if ( id_repeat_counter[r_id] % 20 == 0)
-		{
-			// print
+// 		id_repeat_counter[r_id]++;
+// 		
+// 		if ( id_repeat_counter[r_id] % 20 == 0)
+// 		{
+// 			// print
 			
 			
 			
-			char str[200];
-			uint8_t count ;
+// 			char str[200];
+// 			uint8_t count ;
 
-			Timer_on();
-			if (id_repeat_counter[r_id]/20==1)
-			{
-				count = sprintf(str,"%d,%d,%d,%dz",
-				((int)(Buf_Rx[r_id][0]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][1]) & 0x0ff),
-				((int)(Buf_Rx[r_id][2]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][3]) & 0x0ff),
-				((int)(Buf_Rx[r_id][4]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][5]) & 0x0ff),
-				((int)(Buf_Rx[r_id][6]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][7]) & 0x0ff));
-			}
-			else if (id_repeat_counter[r_id]/20==2)
-			{
-				count = sprintf(str,"%d,%d,%d,%dz",
-				((int)(Buf_Rx[r_id][8]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][9]) & 0x0ff),
-				((int)(Buf_Rx[r_id][10]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][11]) & 0x0ff),
-				((int)(Buf_Rx[r_id][12]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][13]) & 0x0ff),
-				((int)(Buf_Rx[r_id][14]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][15]) & 0x0ff));
-			}
-			else if (id_repeat_counter[r_id]/20==3)
-			{
-				count = sprintf(str,"%d,%d,%d,%dz",
-				((int)(Buf_Rx[r_id][16]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][17]) & 0x0ff),
-				((int)(Buf_Rx[r_id][18]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][19]) & 0x0ff),
-				((int)(Buf_Rx[r_id][20]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][21]) & 0x0ff),
-				((int)(Buf_Rx[r_id][22]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][23]) & 0x0ff));
-			}
-			else if (id_repeat_counter[r_id]/20==4)
-			{
-				count = sprintf(str,"%d,%d,%d,%dz",
-				((int)(Buf_Rx[r_id][24]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][25]) & 0x0ff),
-				((int)(Buf_Rx[r_id][26]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][27]) & 0x0ff),
-				((int)(Buf_Rx[r_id][28]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][29]) & 0x0ff),
-				((int)(Buf_Rx[r_id][30]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][31]) & 0x0ff));
-			}
+//			Timer_on();
+// 			if (id_repeat_counter[r_id]/20==1)
+// 			{
+// 				count = sprintf(str,"%d,%d,%d,%dz",
+// 				((int)(Buf_Rx[r_id][0]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][1]) & 0x0ff),
+// 				((int)(Buf_Rx[r_id][2]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][3]) & 0x0ff),
+// 				((int)(Buf_Rx[r_id][4]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][5]) & 0x0ff),
+// 				((int)(Buf_Rx[r_id][6]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][7]) & 0x0ff));
+// 			}
+// 			else if (id_repeat_counter[r_id]/20==2)
+// 			{
+// 				count = sprintf(str,"%d,%d,%d,%dz",
+// 				((int)(Buf_Rx[r_id][8]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][9]) & 0x0ff),
+// 				((int)(Buf_Rx[r_id][10]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][11]) & 0x0ff),
+// 				((int)(Buf_Rx[r_id][12]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][13]) & 0x0ff),
+// 				((int)(Buf_Rx[r_id][14]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][15]) & 0x0ff));
+// 			}
+// 			else if (id_repeat_counter[r_id]/20==3)
+// 			{
+// 				count = sprintf(str,"%d,%d,%d,%dz",
+// 				((int)(Buf_Rx[r_id][16]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][17]) & 0x0ff),
+// 				((int)(Buf_Rx[r_id][18]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][19]) & 0x0ff),
+// 				((int)(Buf_Rx[r_id][20]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][21]) & 0x0ff),
+// 				((int)(Buf_Rx[r_id][22]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][23]) & 0x0ff));
+// 			}
+// 			else if (id_repeat_counter[r_id]/20==4)
+// 			{
+// 				count = sprintf(str,"%d,%d,%d,%dz",
+// 				((int)(Buf_Rx[r_id][24]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][25]) & 0x0ff),
+// 				((int)(Buf_Rx[r_id][26]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][27]) & 0x0ff),
+// 				((int)(Buf_Rx[r_id][28]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][29]) & 0x0ff),
+// 				((int)(Buf_Rx[r_id][30]<<8) & 0xff00) | ((int)(Buf_Rx[r_id][31]) & 0x0ff));
+// 			}
 			
 			//TODO
-			usart_putchar(&USARTE0,find_header_char(r_id,id_repeat_counter[r_id]/20));
-			
-			for (uint8_t i=0;i<count;i++)
-			usart_putchar(&USARTE0,str[i]);
-			Timer_show();
+// 			usart_putchar(&USARTE0,find_header_char(r_id,id_repeat_counter[r_id]/20));
+// 			
+// 			for (uint8_t i=0;i<count;i++)
+// 			usart_putchar(&USARTE0,str[i]);
+			//Timer_show();
 			//usart_putchar(&USARTE0,'\r');
 			//print
 			
 			
 			
-			if (id_repeat_counter[r_id] == 80) id_repeat_counter[r_id]=0;
-		}
+//			if (id_repeat_counter[r_id] == 80) id_repeat_counter[r_id]=0;
+//		}
 		
 /*
 		if ( Robot_Select == r_id)
