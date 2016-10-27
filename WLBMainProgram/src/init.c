@@ -112,8 +112,7 @@ void DMA_init(void)
 	memset(&dmach_conf, 0, sizeof(dmach_conf));
 	dma_channel_set_burst_length(&dmach_conf, DMA_CH_BURSTLEN_1BYTE_gc);
 	dma_channel_set_transfer_count(&dmach_conf, DMA_BUFFER_SIZE);
-	dma_channel_set_src_reload_mode(&dmach_conf,
-	DMA_CH_SRCRELOAD_TRANSACTION_gc);														//changed transcation bood
+	dma_channel_set_src_reload_mode(&dmach_conf, DMA_CH_SRCRELOAD_TRANSACTION_gc);														//changed transcation bood
 	dma_channel_set_dest_reload_mode(&dmach_conf,
 	DMA_CH_DESTRELOAD_NONE_gc);														//changed  Atmel says : DMA_CH_DESTRELOAD_NONE_gc
 	dma_channel_set_src_dir_mode(&dmach_conf, DMA_CH_SRCDIR_INC_gc);
@@ -125,7 +124,7 @@ void DMA_init(void)
 	
 	//change
 	//No Repeat
-	dmach_conf.ctrla &=~ DMA_CH_REPEAT_bm;
+	dmach_conf.ctrla |= DMA_CH_REPEAT_bm;
 	dmach_conf.repcnt = 0;
 	//singleshot
 	dmach_conf.ctrla |= DMA_CH_SINGLE_bm;

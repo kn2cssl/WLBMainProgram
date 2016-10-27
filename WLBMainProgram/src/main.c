@@ -22,8 +22,8 @@ int16_t r_id = 0 , l_id = 6 ;
 uint16_t timer;
 
 //Reza_c
-char find_header_char (char id , char martabe);
-char id_repeat_counter[12]={0,2,4,6,8,10,11,12,14,15,17,19};
+//char find_header_char (char id , char martabe);
+//char id_repeat_counter[12]={0,2,4,6,8,10,11,12,14,15,17,19};
 
 int main (void)
 {
@@ -64,8 +64,8 @@ int main (void)
 
 	while (1)
 	{
-		delay_ms(600);
-		dma_channel_enable(DMA_CHANNEL);
+// 		delay_ms(600);
+// 		dma_channel_enable(DMA_CHANNEL);
 	}
 }
 
@@ -414,10 +414,10 @@ void Timer_show (void)
 	usart_putchar(&USARTE0,str[i]);
 }
 
-//Reza_c
-char find_header_char (char id , char martabe)
-{
-	char out_char =  id * 4 + martabe + 64;
-	if (out_char>90)out_char +=6 ;
-	return out_char;
-}
+// Reza_c
+// char find_header_char (char id , char martabe)
+// {
+// 	char out_char =  id * 4 + martabe + 64;
+// 	if (out_char>90)out_char +=6 ;
+// 	return out_char;
+// }
